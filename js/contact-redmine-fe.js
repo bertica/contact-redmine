@@ -70,7 +70,10 @@ $(document).ready(function () {
     });
 
     $("form#form_soporte").submit(function (e) {
+       
         e.preventDefault(); //form will not submitted
+        
+        
         if(!$("#mensaje-error").hasClass("oculto")) {
             $("#mensaje-error").addClass("oculto");
         }
@@ -87,7 +90,6 @@ $(document).ready(function () {
             $("#mensaje-advertencia").addClass("oculto");
         }
         $("#mensaje-advertencia").html("");
-        $('#sending').append("<img src='"+jsVars.pluginsURL + "/contact-redmine/img/sending.gif' id='loader'>");
         $.ajax({
             url: jsVars.pluginsURL + "/contact-redmine/accion.php",
             method: "POST",
@@ -95,7 +97,11 @@ $(document).ready(function () {
             contentType: false,
             cache: false,
             processData: false,
-            dataType: "json"
+            dataType: "json",
+            beforeSend : function() { 
+                $("#boton_enviar").addClass("oculto");
+                $('#sending').append("<img src='"+jsVars.pluginsURL + "/contact-redmine/img/sending.gif' id='loader'>");
+            }
         }).done(function (data) {
             //console.log(data);
             error = data.error;
@@ -135,6 +141,8 @@ $(document).ready(function () {
                  $("#mensaje-advertencia").html(advertencia);
                  $("#mensaje-advertencia").removeClass("oculto");
             }
+            $('#loader').remove();
+            $("#boton_enviar").removeClass("oculto");
         }).fail(function (jqXHR, textStatus, ErrorThrown) {
             //console.log(ErrorThrown);
             if (jqXHR.status === 0) {
@@ -153,7 +161,6 @@ $(document).ready(function () {
                 console.log('Uncaught Error: ' + jqXHR.responseText);
             }
         });
-        $('#loader').remove();
     });
 
     $("button#volver").on("click", function (e) {

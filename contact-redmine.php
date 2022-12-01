@@ -21,7 +21,9 @@ function redmine_tool_install()
 function redmine_register_css()
 {
     wp_register_style('bootstrap-css', '/wp-content/plugins/contact-redmine/admin/css/bootstrap.min.css');
+    //wp_register_style( 'bootstrap-css', '/wp-content/plugins/contact-redmine/admin/css/bootstrap.min.css', array( 'contact-redmine-fe-css' ), false, 'all' );
     wp_register_style('contact-redmine-css', '/wp-content/plugins/contact-redmine/admin/css/contact-redmine.css');
+    //wp_register_style('contact-redmine-fe-css', '/wp-content/plugins/contact-redmine/css/contact-redmine-fe.css',array('bootstrap-css'),false,'all');
     wp_register_style('contact-redmine-fe-css', '/wp-content/plugins/contact-redmine/css/contact-redmine-fe.css');
     wp_register_style('font-googleapis', 'https://fonts.googleapis.com/css?family=Poppins');
 }
@@ -30,6 +32,8 @@ function redmine_register_css()
 function redmine_enqueue_css()
 {
     wp_enqueue_style("contact-redmine-fe-css");
+    //wp_enqueue_style('bootstrap-css');
+    //wp_enqueue_style('contact-redmine-css');
     wp_enqueue_style('font-googleapis');
 }
 
@@ -153,7 +157,7 @@ function add_my_custom_page()
                     <input type="text" class="form-control" id="captcha_challenge" name="captcha_challenge" pattern="[A-Z]{6}" disabled required >
                 </div>
                 <div id="sending"></div>
-                <button type="submit" class="button btn btn-primary" value="Enviar">Enviar</button>
+                <button id="boton_enviar" type="submit" class="button btn btn-primary" value="Enviar">Enviar</button>
             </form>
         </div>
     </div>';
