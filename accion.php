@@ -1,5 +1,5 @@
 <?php
-session_start();
+//session_start();
 require_once('secret.php');
 require_once("../../../wp-load.php");
 

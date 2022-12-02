@@ -59,6 +59,15 @@ add_action('init', 'redmine_register_js');
 add_action('init', 'redmine_enqueue_css');
 add_action('init', 'redmine_enqueue_js');
 
+//Para hacer uso de sesiones para el captcha del formulario
+add_action( 'init', 'rm_session_start' );
+function rm_session_start() {
+    if ( ! session_id() ) {
+          session_start(); // Iniciamos la sesion
+    }
+}
+
+
 function redmine_menu_administrador()
 {
     add_menu_page('Integración Redmine', 'Integración Redmine', 'manage_options', 'contact-redmine', 'load_redmine_contact', '', 26);

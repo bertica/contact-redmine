@@ -1,6 +1,6 @@
 <?php
  
-session_start();
+//session_start();
 
 $logFile = fopen("log.txt", 'a');
 
