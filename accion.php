@@ -6,10 +6,13 @@ require_once("../../../wp-load.php");
 $logFile = fopen("log.txt", 'a');
 
 $captchaCorrecto = FALSE;
-
-if (isset($_POST['captcha_challenge']) && $_POST['captcha_challenge'] == $_SESSION['captcha_text']) {
+if (isset($_POST['captcha_challenge']) && isset($_SESSION['captcha_text']) && $_POST['captcha_challenge'] == $_SESSION['captcha_text']) {
     $captchaCorrecto = TRUE;
 } else {
+    $captchaExpired = false;
+    if(!isset($_SESSION['captcha_text'])){
+        $captchaExpired = true;
+    }
     $captchaCorrecto = FALSE;
 }
 
@@ -185,15 +188,15 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
     $ip = getIPAddress();
     fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: dirección IP -- " . $ip);
 
-    $descriptionRedmine = '*' . $nombre_solicitante . ' ' . $pape_solicitante . '* ha enviado el ' . $date . ' desde la IP ' . $ip . ' una incidencia con la siguiente información:\n';
-    $descriptionRedmine .= '\n\r';
-    $descriptionRedmine .= '- *Ámbito* : ' . $ambito . '\n\r';
-    $descriptionRedmine .= '- *Asunto* : ' . $asunto . '\n\r';
-    $descriptionRedmine .= '- *Nombre solicitante* : ' . $nombre_solicitante . '\n\r';
-    $descriptionRedmine .= '- *1er apellido solicitante* : ' . $pape_solicitante . '\n\r';
-    $descriptionRedmine .= '- *2º apellido solicitante* : ' . $sape_solicitante . '\n\r';
-    $descriptionRedmine .= '- *E-mail solicitante* : ' . $email_solicitante . '\n\r';
-    $descriptionRedmine .= '- *Explicación de la situación* : ' . $otros . '\n\r';
+    $descriptionRedmine = '<description>*' . $nombre_solicitante . ' ' . $pape_solicitante . '* ha enviado el ' . $date . ' desde la IP ' . $ip . ' una incidencia con la siguiente información:</description>';
+    $descriptionRedmine .= '';
+    $descriptionRedmine .= '<description>- *Ámbito* : ' . $ambito . '</description>';
+    $descriptionRedmine .= '<description>- *Asunto* : ' . $asunto . '</description>';
+    $descriptionRedmine .= '<description>- *Nombre solicitante* : ' . $nombre_solicitante . '</description>';
+    $descriptionRedmine .= '<description>- *1er apellido solicitante* : ' . $pape_solicitante . '</description>';
+    $descriptionRedmine .= '<description>- *2º apellido solicitante* : ' . $sape_solicitante . '</description>';
+    $descriptionRedmine .= '<description>- *E-mail solicitante* : ' . $email_solicitante . '</description>';
+    $descriptionRedmine .= '<description>- *Explicación de la situación* : ' . $otros . '</description>';
    
     //////////////////////////////
     // Contacto con RedMine para crear la incidencia
@@ -227,8 +230,8 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
             </uploads>';
     }
 
-    $issue .= '<description><![CDATA[' . $descriptionRedmine . ']]></description>
-        <priority_id>2</priority_id>
+    $issue .= $descriptionRedmine;//'<description><![CDATA[' . $descriptionRedmine . ']]></description>
+    $issue .= '<priority_id>2</priority_id>
         <custom_fields type="array">
             <custom_field id="'.$ownerEmailId.'" name="owner-email">
                 <value>' . $email_solicitante . '</value>
@@ -325,6 +328,9 @@ if (!$camposObligatoriosRellenos) {
     $error =  'Debe rellenar todos los campos obligatorios. Incidencia NO procesada.<br/> Vuelva a intentarlo, por favor.';
 } elseif (!$captchaCorrecto) {
     $error =  'El código de captcha no es correcto. Incidencia NO procesada.<br/> Vuelva a intentarlo, por favor.';
+    if($captchaExpired){
+        $error = 'El código de captcha ha caducado, genere otro y vuelva a intentarlo, por favor. Incidencia NO procesada.';
+    }
 } elseif ($exitoCreandoIncidencia && $exitoEnviandoEmail) {
     $exito =  'Incidencia ' . $incidenciaCreadaId . ' creada. Se le ha enviado un email con copia de la misma.';
 } elseif ($exitoCreandoIncidencia && !$exitoEnviandoEmail) {
