@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 $logFile = fopen("log.txt", 'a');
 
 $permitted_chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
