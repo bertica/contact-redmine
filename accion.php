@@ -1,5 +1,5 @@
 <?php
-//session_start();
+session_start();
 require_once('secret.php');
 require_once("../../../wp-load.php");
 
@@ -188,15 +188,15 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
     $ip = getIPAddress();
     fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: dirección IP -- " . $ip);
 
-    $descriptionRedmine = '<description>*' . $nombre_solicitante . ' ' . $pape_solicitante . '* ha enviado el ' . $date . ' desde la IP ' . $ip . ' una incidencia con la siguiente información:</description>';
-    $descriptionRedmine .= '';
-    $descriptionRedmine .= '<description>- *Ámbito* : ' . $ambito . '</description>';
-    $descriptionRedmine .= '<description>- *Asunto* : ' . $asunto . '</description>';
-    $descriptionRedmine .= '<description>- *Nombre solicitante* : ' . $nombre_solicitante . '</description>';
-    $descriptionRedmine .= '<description>- *1er apellido solicitante* : ' . $pape_solicitante . '</description>';
-    $descriptionRedmine .= '<description>- *2º apellido solicitante* : ' . $sape_solicitante . '</description>';
-    $descriptionRedmine .= '<description>- *E-mail solicitante* : ' . $email_solicitante . '</description>';
-    $descriptionRedmine .= '<description>- *Explicación de la situación* : ' . $otros . '</description>';
+    $descriptionRedmine = '*' . $nombre_solicitante . ' ' . $pape_solicitante . '* ha enviado el ' . $date . ' desde la IP ' . $ip . ' una incidencia con la siguiente información: &#xD;';
+    $descriptionRedmine .= '&#xD;';
+    $descriptionRedmine .= '- *Ámbito* : ' . $ambito . '&#xD;';
+    $descriptionRedmine .= '- *Asunto* : ' . $asunto . '&#xD;';
+    $descriptionRedmine .= '- *Nombre solicitante* : ' . $nombre_solicitante . '&#xD;';
+    $descriptionRedmine .= '- *1er apellido solicitante* : ' . $pape_solicitante . '&#xD;';
+    $descriptionRedmine .= '- *2º apellido solicitante* : ' . $sape_solicitante . '&#xD;';
+    $descriptionRedmine .= '- *E-mail solicitante* : ' . $email_solicitante . '&#xD;';
+    $descriptionRedmine .= '- *Explicación de la situación* : ' . $otros . '&#xD;';
    
     //////////////////////////////
     // Contacto con RedMine para crear la incidencia
@@ -230,8 +230,8 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
             </uploads>';
     }
 
-    $issue .= $descriptionRedmine;//'<description><![CDATA[' . $descriptionRedmine . ']]></description>
-    $issue .= '<priority_id>2</priority_id>
+    $issue .= '<description><![CDATA[' . $descriptionRedmine . ']]></description>
+        <priority_id>2</priority_id>
         <custom_fields type="array">
             <custom_field id="'.$ownerEmailId.'" name="owner-email">
                 <value>' . $email_solicitante . '</value>

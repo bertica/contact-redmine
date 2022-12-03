@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    /*Crea un Captcha nada más entrar en el formulario*/
+    refreshCaptcha();
     //Eventos
     $("#ambito-select").on("change", function () {
         ambito = $("#ambito-select").val();

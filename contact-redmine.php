@@ -60,10 +60,15 @@ add_action('init', 'redmine_enqueue_css');
 add_action('init', 'redmine_enqueue_js');
 
 //Para hacer uso de sesiones para el captcha del formulario
-add_action( 'init', 'rm_session_start' );
-function rm_session_start() {
-    if ( ! session_id() ) {
-          session_start(); // Iniciamos la sesion
+//add_action('init', 'rm_session_start');
+function rm_session_start()
+{
+    if (!session_id()) {
+        //seteo la vida de la session en 60 segundos    
+        //ini_set("session.cookie_lifetime", "60");
+        //seteo el maximo tiempo de vida de la session
+        //ini_set("session.gc_maxlifetime", "60");
+        session_start(); // Iniciamos la sesion
     }
 }
 
@@ -86,7 +91,7 @@ function add_my_custom_page()
 {
     // Create post object
 
-    $form ='
+    $form = '
     <div class="row">
         <div class="col-12">
             <div id="resultado-envio" class="oculto"></div>
@@ -192,4 +197,3 @@ function deactivate_plugin()
     wp_delete_post($page_id->ID, true);
 }
 register_deactivation_hook(__FILE__, 'deactivate_plugin');
-
