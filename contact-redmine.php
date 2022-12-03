@@ -61,7 +61,7 @@ add_action('init', 'redmine_enqueue_js');
 
 
 //Para hacer uso de sesiones para el captcha del formulario
-//add_action('init', 'rm_session_start');
+add_action('init', 'rm_session_start');
 function rm_session_start()
 {
     if (!session_id()) {
