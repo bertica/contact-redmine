@@ -5,12 +5,13 @@ $(document).ready(function () {
     $("#ambito-select").on("change", function () {
         ambito = $("#ambito-select").val();
         $("#ambito").val(ambito);
-        if (ambito != "") {
+        $("#adjunto").prop("disabled", false);
+        /*if (ambito != "") {
             $("#adjunto").prop("disabled", false);
         } else {
             $("#adjunto").prop("disabled", true);
         }
-        $("#ambito-select").prop("disabled", true);
+        $("#ambito-select").prop("disabled", true);*/
     });
 
     //Refresh Captcha
@@ -19,6 +20,10 @@ $(document).ready(function () {
         $(".captcha-image").attr("src", jsVars.pluginsURL + '/contact-redmine/captcha.php?' + $now);
         $("#captcha_challenge").prop("disabled", false);
     }
+
+    $("a#refresh-captcha").on("click", function () {
+        refreshCaptcha();
+    });
 
     function scrollUp() {
         var target = $('#resultado-envio');
@@ -29,10 +34,6 @@ $(document).ready(function () {
             //return false;
         }
     }
-
-    $("a#refresh-captcha").on("click", function () {
-        refreshCaptcha();
-    });
 
     //Fichero adjunto
     $("#adjunto").on("change", function (e) {
