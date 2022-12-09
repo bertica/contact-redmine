@@ -189,15 +189,15 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
     $ip = getIPAddress();
     fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: dirección IP -- " . $ip);
 
-    $descriptionRedmine = '*' . $nombre_solicitante . ' ' . $pape_solicitante . '* ha enviado el ' . $date . ' desde la IP ' . $ip . ' una incidencia con la siguiente información: &#xD;';
-    $descriptionRedmine .= '&#xD;';
-    $descriptionRedmine .= '- *Ámbito* : ' . $ambito . '&#xD;';
-    $descriptionRedmine .= '- *Asunto* : ' . $asunto . '&#xD;';
-    $descriptionRedmine .= '- *Nombre solicitante* : ' . $nombre_solicitante . '&#xD;';
-    $descriptionRedmine .= '- *1er apellido solicitante* : ' . $pape_solicitante . '&#xD;';
-    $descriptionRedmine .= '- *2º apellido solicitante* : ' . $sape_solicitante . '&#xD;';
-    $descriptionRedmine .= '- *E-mail solicitante* : ' . $email_solicitante . '&#xD;';
-    $descriptionRedmine .= '- *Explicación de la situación* : ' . $otros . '&#xD;';
+    $descriptionRedmine = '*' . $nombre_solicitante . ' ' . $pape_solicitante . '* ha enviado el ' . $date . ' desde la IP ' . $ip . ' una incidencia con la siguiente información: \n';
+    $descriptionRedmine .= '\n';
+    $descriptionRedmine .= '- *Ámbito* : ' . $ambito . '\n';
+    $descriptionRedmine .= '- *Asunto* : ' . $asunto . '\n';
+    $descriptionRedmine .= '- *Nombre solicitante* : ' . $nombre_solicitante . '\n';
+    $descriptionRedmine .= '- *1er apellido solicitante* : ' . $pape_solicitante . '\n';
+    $descriptionRedmine .= '- *2º apellido solicitante* : ' . $sape_solicitante . '\n';
+    $descriptionRedmine .= '- *E-mail solicitante* : ' . $email_solicitante . '\n';
+    $descriptionRedmine .= '- *Explicación de la situación* : ' . $otros . '\n';
    
     //////////////////////////////
     // Contacto con RedMine para crear la incidencia
@@ -209,7 +209,7 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
 
     $curl = curl_init();
 
-    $res_curl = curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: text/xml'));
+    $res_curl = curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/xml'));
 
     $res_curl = curl_setopt($curl, CURLOPT_POST, 1);
 
@@ -218,6 +218,10 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
         <issue>
         <project_id>' . $projectId . '</project_id>
         <subject>' . $asunto . ' (' . $ambito . ')</subject>';
+    /*$issue =  '
+        <issue>
+        <project_id>' . $projectId . '</project_id>
+        <subject>' . $asunto . ' (' . $ambito . ')</subject>';*/
 
     if ($token != "") {
         $issue .= '
@@ -241,7 +245,12 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
         <category_id>' . $asignarA . '</category_id>
         </issue>';
     
-    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: issue -- ".$issue);
+    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: XML issue -- ".$issue);
+    $xmlIssue = simplexml_load_string($issue);
+    $jsonIssue = json_encode($xmlIssue);
+    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: JSON issue -- ".$$jsonIssue);
+
+
     $res_curl = curl_setopt($curl, CURLOPT_POSTFIELDS, $issue);
 
     $res_curl = curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);

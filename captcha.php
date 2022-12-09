@@ -47,11 +47,11 @@ $fonts = ['monofont.ttf'];
 $string_length = 6;
 $captcha_string = generate_string($permitted_chars, $string_length);
 
-fwrite($logFile, "\n".date("d/m/Y H:i:s").": captcha -- ".$captcha_string);
+//fwrite($logFile, "\n".date("d/m/Y H:i:s").": captcha -- ".$captcha_string);
  
 $_SESSION['captcha_text'] = $captcha_string;
 
-fwrite($logFile, "\n".date("d/m/Y H:i:s").": captcha -- ".$_SESSION['captcha_text']);
+//fwrite($logFile, "\n".date("d/m/Y H:i:s").": captcha -- ".$_SESSION['captcha_text']);
 
 for($i = 0; $i < $string_length; $i++) {
   $letter_space = 170/$string_length;
