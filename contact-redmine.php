@@ -114,7 +114,8 @@ function add_my_custom_page()
                         <option value="">Elija una opción</option>
                         <option value="Aeducar">Aeducar</option>
                         <option value="Aramoodle">Aramoodle</option>
-                        <option value="Aularagón">Aularagón</option>
+                        <option value="AularagonContenidos">Aularagón: Contenidos</option>
+                        <option value="AularagonGestion">Aularagón: Gestión</option>
                         <option value="Competencias digitales">Competencias digitales</option>
                         <option value="Doceo">Doceo</option>
                         <option value="FP Distancia">FP Distancia</option>

@@ -310,6 +310,7 @@ $(document).ready(function () {
         $("button#volver").addClass("oculto");
         $(".captcha-image").attr("src", "");
         $("#ambito-select").prop("disabled", false);
+        $("#token").val("");
         refreshCaptcha();
     });
 });

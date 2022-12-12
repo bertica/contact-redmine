@@ -11,7 +11,7 @@ if (isset($_POST['captcha_challenge']) && isset($_SESSION['captcha_text']) && $_
     $captchaCorrecto = TRUE;
 } else {
     $captchaExpired = false;
-    if(!isset($_SESSION['captcha_text'])){
+    if (!isset($_SESSION['captcha_text'])) {
         $captchaExpired = true;
     }
     $captchaCorrecto = FALSE;
@@ -119,8 +119,11 @@ function asignarIncidenciaA($ambito)
         case "Aramoodle":
             return $GLOBALS["idCategoryAramoodle"];
             break;
-        case "Aularagón":
-            return $GLOBALS["idCategoryAularagon"];
+        case "AularagonContenidos":
+            return $GLOBALS["idCategoryAularagonContenidos"];
+            break;
+        case "AularagonGestion":
+            return $GLOBALS["idCategoryAularagonGestion"];
             break;
         case "Competencias digitales":
             $projectId = "13";
@@ -198,7 +201,7 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
     $descriptionRedmine .= '- *2º apellido solicitante* : ' . $sape_solicitante . '\n';
     $descriptionRedmine .= '- *E-mail solicitante* : ' . $email_solicitante . '\n';
     $descriptionRedmine .= '- *Explicación de la situación* : ' . $otros . '\n';
-   
+
     //////////////////////////////
     // Contacto con RedMine para crear la incidencia
     //////////////////////////////
@@ -213,20 +216,20 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
     $res_curl = curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 
     $res_curl = curl_setopt($curl, CURLOPT_POST, 1);
-    
-    $jsonIssue = '{ "issue": {"project_id":"'. $projectId .'","subject":"'.$asunto.'","description":"'.$descriptionRedmine.'",
-        "priority_id":"2","custom_fields":{"@attributes":{"type":"array"},"custom_field":{"@attributes":{"id":"1","name":"owner-email"},"value":"'.$ownerEmailId.'"}},"category_id": "'.$asignarA .'"';
-        
-    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: token -- ".$token);
-    
+
+    $jsonIssue = '{ "issue": {"project_id":"' . $projectId . '","subject":"' . $asunto . '","description":"' . $descriptionRedmine . '",
+        "priority_id":"2","custom_fields":{"@attributes":{"type":"array"},"custom_field":{"@attributes":{"id":"1","name":"owner-email"},"value":"' . $ownerEmailId . '"}},"category_id": "' . $asignarA . '"';
+
+    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: token -- " . $token);
+
     if ($token != "") {
-        $jsonIssue .= ', "uploads":{"@attributes":{"type":"array"},"upload":{"token":"'.$token.'","filename":"'.$adjunto.'","description":"fichero adjunto","content_type":"image/png"}}';
+        $jsonIssue .= ', "uploads":{"@attributes":{"type":"array"},"upload":{"token":"' . $token . '","filename":"' . $adjunto . '","description":"fichero adjunto","content_type":"image/png"}}';
     }
 
     $jsonIssue .= '} }';
 
-    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: JSON issue -- ".$jsonIssue);
-    
+    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: JSON issue -- " . $jsonIssue);
+
 
     $res_curl = curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonIssue);
 
@@ -239,17 +242,17 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
     $res_curl = curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
     $result = curl_exec($curl);
-    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: result -- ".var_export(json_decode($result,true),true));
-    if($result === false || $result == null){
-        fwrite($logFile, "\n" . date("d/m/Y H:i:s") ." accion.php : Curl error .. " . curl_error($curl));
+    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: result -- " . var_export(json_decode($result, true), true));
+    if ($result === false || $result == null) {
+        fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php : Curl error .. " . curl_error($curl));
     }
     curl_close($curl);
-    
+
     $respuesta = json_decode($result, true);
 
     $incidenciaCreada = $respuesta["issue"];
     $incidenciaCreadaId = $incidenciaCreada["id"];
-    
+
     $exitoCreandoIncidencia = false;
     if (isset($incidenciaCreadaId) && $incidenciaCreadaId !== '') {
         $exitoCreandoIncidencia = true;
@@ -258,7 +261,7 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
     //$exitoCreandoIncidencia = true;
     //$incidenciaCreadaId = 1;
     //BORRAR*************************/
-    
+
     //////////////////////////////
     // Envío email al usuario con copia de su solicitud original
     //////////////////////////////
@@ -309,13 +312,13 @@ $exito = '';
 $html = '';
 $advertencia = '';
 
-fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: camposObligatoriosRellenos -- ".$camposObligatoriosRellenos."; captchaCorrecto -- ".$captchaCorrecto."; exitoCreandoIncidencia -- ".$exitoCreandoIncidencia."; exitoEnvindoEmail -- ".$exitoEnviandoEmail);
+fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: camposObligatoriosRellenos -- " . $camposObligatoriosRellenos . "; captchaCorrecto -- " . $captchaCorrecto . "; exitoCreandoIncidencia -- " . $exitoCreandoIncidencia . "; exitoEnvindoEmail -- " . $exitoEnviandoEmail);
 
 if (!$camposObligatoriosRellenos) {
     $error =  'Debe rellenar todos los campos obligatorios. Incidencia NO procesada.<br/> Vuelva a intentarlo, por favor.';
 } elseif (!$captchaCorrecto) {
     $error =  'El código de captcha no es correcto. Incidencia NO procesada.<br/> Vuelva a intentarlo, por favor.';
-    if($captchaExpired){
+    if ($captchaExpired) {
         $error = 'El código de captcha ha caducado, genere otro y vuelva a intentarlo, por favor. Incidencia NO procesada.';
     }
 } elseif ($exitoCreandoIncidencia && $exitoEnviandoEmail) {
@@ -357,7 +360,7 @@ if ($exitoCreandoIncidencia) {
                         <li>Nombre solicitante: ' . $nombre_solicitante_html . '</li>
                         <li>1er apellido solicitante: ' . $pape_solicitante_html . '</li>
                         <li>2º apellido solicitante: ' . $sape_solicitante_html . '</li>
-                        <li>E-mail solicitante: ' . $email_solicitante_html .'</li>
+                        <li>E-mail solicitante: ' . $email_solicitante_html . '</li>
                         <li>Explicación de la situación: ' . $otros_html . '</li>
                     </ul>
                 </div>';
@@ -373,4 +376,3 @@ $resultado = array("error" => $error, "exito" => $exito, "exitoCreandoIncidencia
 //fwrite($logFile, "\n".date("d/m/Y H:i:s")." accion.php: array -- ". print_r($resultado,true));
 fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: json -- " . json_encode($resultado));
 echo json_encode($resultado);
-
