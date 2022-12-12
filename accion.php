@@ -209,49 +209,26 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
 
     $curl = curl_init();
 
-    $res_curl = curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/xml'));
+    //$res_curl = curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/xml'));
+    $res_curl = curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 
     $res_curl = curl_setopt($curl, CURLOPT_POST, 1);
-
-    $issue =  '
-        <?xml version="1.0"?>
-        <issue>
-        <project_id>' . $projectId . '</project_id>
-        <subject>' . $asunto . ' (' . $ambito . ')</subject>';
-    /*$issue =  '
-        <issue>
-        <project_id>' . $projectId . '</project_id>
-        <subject>' . $asunto . ' (' . $ambito . ')</subject>';*/
-
+    
+    $jsonIssue = '{ "issue": {"project_id":"'. $projectId .'","subject":"'.$asunto.'","description":"'.$descriptionRedmine.'",
+        "priority_id":"2","custom_fields":{"@attributes":{"type":"array"},"custom_field":{"@attributes":{"id":"1","name":"owner-email"},"value":"'.$ownerEmailId.'"}},"category_id": "'.$asignarA .'"';
+        
+    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: token -- ".$token);
+    
     if ($token != "") {
-        $issue .= '
-            <uploads type="array">
-              <upload>
-                <token>' . $token . '</token>
-                <filename>' . $adjunto . '</filename>
-                <description>Fichero adjunto</description>
-                <content_type>image/png</content_type>
-              </upload>
-            </uploads>';
+        $jsonIssue .= ', "uploads":{"@attributes":{"type":"array"},"upload":{"token":"'.$token.'","filename":"'.$adjunto.'","description":"fichero adjunto","content_type":"image/png"}}';
     }
 
-    $issue .= '<description><![CDATA[' . $descriptionRedmine . ']]></description>
-        <priority_id>2</priority_id>
-        <custom_fields type="array">
-            <custom_field id="'.$ownerEmailId.'" name="owner-email">
-                <value>' . $email_solicitante . '</value>
-            </custom_field>
-        </custom_fields>
-        <category_id>' . $asignarA . '</category_id>
-        </issue>';
+    $jsonIssue .= '} }';
+
+    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: JSON issue -- ".$jsonIssue);
     
-    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: XML issue -- ".$issue);
-    $xmlIssue = simplexml_load_string($issue);
-    $jsonIssue = json_encode($xmlIssue);
-    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: JSON issue -- ".$$jsonIssue);
 
-
-    $res_curl = curl_setopt($curl, CURLOPT_POSTFIELDS, $issue);
+    $res_curl = curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonIssue);
 
     $res_curl = curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 
@@ -263,7 +240,7 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
 
     $result = curl_exec($curl);
     fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: result -- ".var_export(json_decode($result,true),true));
-    if($result === false){
+    if($result === false || $result == null){
         fwrite($logFile, "\n" . date("d/m/Y H:i:s") ." accion.php : Curl error .. " . curl_error($curl));
     }
     curl_close($curl);
@@ -388,23 +365,12 @@ if ($exitoCreandoIncidencia) {
 
 fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: html -- " . $html);
 fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: advertencia -- " . $advertencia);
-
-/*$error = 'Error creando incidencia';
-$exito = '';
-$exitoCreandoIncidencia = null;
-$html = '';
-$advertencia = 'Advertencia';*/
-
 fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: exito -- " . $exito);
 
 
 $resultado = array("error" => $error, "exito" => $exito, "exitoCreandoIncidencia" => $exitoCreandoIncidencia, "html" => $html, "advertencia" => $advertencia);
 
-//$resultado = ["error" => $error, "exito" => $exito, "exitoCreandoIncidencia" => $exitoCreandoIncidencia, "html" => $html, "advertencia" => $advertencia];
-//$resultado = array('error' => '');
-
-
 //fwrite($logFile, "\n".date("d/m/Y H:i:s")." accion.php: array -- ". print_r($resultado,true));
 fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: json -- " . json_encode($resultado));
 echo json_encode($resultado);
-//echo json_encode(array("error" => $error, "exito" => $exito, "exitoCreandoIncidencia" => $exitoCreandoIncidencia, "html" => $html, "advertencia" => $advertencia));
+
