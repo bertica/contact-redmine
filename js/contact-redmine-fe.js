@@ -103,7 +103,7 @@ $(document).ready(function () {
         //Enviar primero el adjunto
         advertencia = 'Si el error persiste puede enviar la incidencia por correo a las siguientes direcciones: <ul> <li><a href=\'mailto:soportecatedu@educa.aragon.es\'>soportecatedu@educa.aragon.es</a> si es una incidencia general sobre Catedu o Doceo</li><li><a href=\'mailto:soporteaeducar@educa.aragon.es\'>soporteaeducar@educa.aragon.es</a> si es una incidencia sobre la plataforma AeducAR</li><li><a href=\'mailto:soportevitalinux@educa.aragon.es\'>soportevitalinux@educa.aragon.es</a> si es una incidencia sobre Vitalinux. El programa vitalinux tiene su propia web de soporte abierta en el <a href=\'https://soporte.vitalinux.educa.aragon.es\'>siguiente sitio</a></li></ul>';
         var form = $('form#form_soporte')[0];
-        var datos = new FormData(form);
+        
         ambito = $("#ambito-select").val();
 
         file = $("#adjunto").prop("files")[0];
@@ -117,14 +117,14 @@ $(document).ready(function () {
             var xhr = new XMLHttpRequest();
 
             // Open the connection
-            xhr.open('POST', jsVars.pluginsURL + '/contact-redmine/upload.php', true);
+            xhr.open('POST', jsVars.pluginsURL + '/contact-redmine/upload.php', false);
 
             // Set up a handler for when the task for the request is complete
             xhr.onload = function () {
                 if (xhr.status == 200) {
                     console.log("respuesta: " + xhr.responseText);
                     $("#token").val(xhr.responseText);
-
+                    var datos = new FormData(form);
                     //Si el adjunto se ha enviado OK, ahora la incidencia:
                     $.ajax({
                         url: jsVars.pluginsURL + "/contact-redmine/accion.php",
@@ -210,7 +210,9 @@ $(document).ready(function () {
 
             // Send the data.
             xhr.send(formData);
+            
         } else {
+            var datos = new FormData(form);
             $.ajax({
                 url: jsVars.pluginsURL + "/contact-redmine/accion.php",
                 method: "POST",

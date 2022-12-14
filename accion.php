@@ -218,7 +218,7 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
     $res_curl = curl_setopt($curl, CURLOPT_POST, 1);
 
     $jsonIssue = '{ "issue": {"project_id":"' . $projectId . '","subject":"' . $asunto . '","description":"' . $descriptionRedmine . '",
-        "priority_id":"2","custom_fields":{"@attributes":{"type":"array"},"custom_field":{"@attributes":{"id":"1","name":"owner-email"},"value":"' . $ownerEmailId . '"}},"category_id": "' . $asignarA . '"';
+        "priority_id":"2","custom_fields": [{ "value": "'.$email_solicitante.'", "id": "'.$ownerEmailId.'","name": "owner-email"}],"category_id": "' . $asignarA . '"';
 
     fwrite($logFile, "\n" . date("d/m/Y H:i:s") . " accion.php: token -- " . $token);
 
