@@ -165,8 +165,19 @@ $pape_solicitante = htmlspecialchars($_POST["pape_solicitante"]);
 $sape_solicitante = htmlspecialchars($_POST["sape_solicitante"]);
 $email_solicitante = htmlspecialchars($_POST["email_solicitante"]);
 fwrite($logFile, "\n" . date("d/m/Y H:i:s") . ": email solicitante -- " . $email_solicitante);
+
+//Esto para la descripción a enviar a Redmine
+$otros2 = str_replace("\r","",$_POST['otros']);
+$contenido_otros = explode("\n",$otros2);
+$otros_json = "";
+foreach($contenido_otros as $line) {
+    $otros_json .= strval($line).'\n';
+}
+//Esto para el resultado y el email
 $otros = htmlspecialchars($_POST["otros"]);
-//
+$otros = htmlspecialchars($otros);
+/* */
+
 $captcha = htmlspecialchars($_POST["captcha"]);
 $token = htmlspecialchars($_POST["token"]);
 $adjuntwo = htmlspecialchars($_POST["adjunto"]);
@@ -200,7 +211,12 @@ if ($camposObligatoriosRellenos && $captchaCorrecto) {
     $descriptionRedmine .= '- *1er apellido solicitante* : ' . $pape_solicitante . '\n';
     $descriptionRedmine .= '- *2º apellido solicitante* : ' . $sape_solicitante . '\n';
     $descriptionRedmine .= '- *E-mail solicitante* : ' . $email_solicitante . '\n';
-    $descriptionRedmine .= '- *Explicación de la situación* : ' . $otros . '\n';
+    $descriptionRedmine .= '- *Explicación de la situación* : ' . $otros_json . '\n';
+    /*$descriptionRedmine .= '- *Explicación de la situación* : ';
+    foreach($contenido_otros as $otro){
+        $descriptionRedmine .= $otro . '\n'
+    }*/
+
 
     //////////////////////////////
     // Contacto con RedMine para crear la incidencia
