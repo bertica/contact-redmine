@@ -168,6 +168,7 @@ fwrite($logFile, "\n" . date("d/m/Y H:i:s") . ": email solicitante -- " . $email
 
 //Esto para la descripción a enviar a Redmine
 $otros2 = str_replace("\r","",$_POST['otros']);
+$otros2 = str_replace("\"","'",$otros2);
 $contenido_otros = explode("\n",$otros2);
 $otros_json = "";
 foreach($contenido_otros as $line) {
